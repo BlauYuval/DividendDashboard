@@ -28,27 +28,24 @@ for ticker in tickers:
 dividend_preprocessor = DividendDataPreprocessor()
 dividend_preprocessor.preprocess_multiple_tickers_data(dividends_dict)
 dividends_data = dividend_preprocessor.df.copy()
-# dividends_data.to_csv("data/dividend_data_preprocessed.csv", index=False)
 
 sectors_data = conn.read(spreadsheet=st.secrets['connections']['gsheets']['sectors'])
 sectors_data = sectors_data[['ticker', 'sector', 'industry']].dropna().copy()
-# sectors_data = pd.read_csv("data/sectors.csv")
 
-st.title("Portfolio")
+
+st.markdown("<h1 style='text-align: center; color: black;'>Dividend Dashboard", unsafe_allow_html=True)
+# PORTFOLIO
 
 portfolio = Portfolio(transaction_data, sectors_data)
 portfolio.run()
 
-st.title("Income")
+# INCOME
     
 income = Income(transaction_data, dividends_data)
-income.get_income_data()
-income.get_income_streamlit_bullet()
-income.get_income_bar_chart()
+income.run()
 
-st.title("Growth")
+# GROWTH
 
 tickers = portfolio.portfolio_data.ticker.to_list()
 growth = DividendGrowth(income.transaction_data[['ticker','start_payment_date']], dividends_data, tickers)
-growth_df = growth.merge_prev_and_forward_growth()
-st.dataframe(growth.plot(growth_df))
+growth.run()

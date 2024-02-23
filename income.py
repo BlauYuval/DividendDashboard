@@ -139,3 +139,9 @@ class Income:
             
         st.bar_chart(chart_data)
         
+        
+    def run(self):
+        st.header("Income")
+        self.get_income_data()
+        self.get_income_streamlit_bullet()
+        self.get_income_bar_chart()
