@@ -54,7 +54,7 @@ class Portfolio:
         df_for_plot['Amount Paid'] = df_for_plot['Amount Paid'].apply(lambda x: round(x, 2))
         df_for_plot['percent'] = (df_for_plot['Amount Paid']/df_for_plot['Amount Paid'].sum()).apply(lambda x: round(x, 2))*100
         colors = ['rgb(79, 129, 102)' for i in range(len(df_for_plot))]
-        layout=go.Layout(width=600,height=600)
+        layout=go.Layout(width=400,height=400)
         fig = go.Figure(data=[go.Pie(labels=df_for_plot.sector,
                              values=df_for_plot.percent, insidetextorientation='radial')], layout=layout)
         fig.update_traces(hoverinfo='label+percent', textinfo='label', textfont_size=15,
