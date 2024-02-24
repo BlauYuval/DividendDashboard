@@ -45,30 +45,6 @@ class Portfolio:
         """
         self.portfolio_by_sectors_data = self.portfolio_data.groupby('sector').agg({'Amount Paid':'sum'})
         self.portfolio_by_sectors_data.reset_index(inplace=True)
-        
-    def plot_pie_by_sectors(self):
-        """
-        Plot the bar chart by sectors
-        """
-        df_for_plot = self.portfolio_by_sectors_data.copy()
-        df_for_plot['Amount Paid'] = df_for_plot['Amount Paid'].apply(lambda x: round(x, 2))
-        df_for_plot['percent'] = (df_for_plot['Amount Paid']/df_for_plot['Amount Paid'].sum()).apply(lambda x: round(x, 2))*100
-        colors = ['rgb(79, 129, 102)' for i in range(len(df_for_plot))]
-        layout=go.Layout(width=400,height=400)
-        fig = go.Figure(data=[go.Pie(labels=df_for_plot.sector,
-                             values=df_for_plot.percent, insidetextorientation='radial')], layout=layout)
-        fig.update_traces(hoverinfo='label+percent', textinfo='label', textfont_size=15,
-                  marker=dict(colors=colors, line=dict(color='#FFFFFF', width=2)))
-        fig.update(layout_showlegend=False)
-        fig.update_layout(margin=dict(t=10))
-        
-        col1, col2 = st.columns(2, gap='large')
-        table_for_plot = self.portfolio_data.set_index('ticker').copy()
-        table_for_plot['Amount Paid'] = table_for_plot['Amount Paid'].apply(lambda x: f'{int(x):,}$')
-        table_for_plot = table_for_plot.rename(columns={'sector':'Sector', 'industry':'Industry'})
-        
-        col1.table(table_for_plot)
-        col2.plotly_chart(fig)
 
     def plot_portoflio_tbl(self):
         """
@@ -88,10 +64,10 @@ class Portfolio:
         df_for_plot['Amount Paid'] = df_for_plot['Amount Paid'].apply(lambda x: round(x, 2))
         df_for_plot['percent'] = (df_for_plot['Amount Paid']/df_for_plot['Amount Paid'].sum()).apply(lambda x: round(x, 2))*100
         colors = ['rgb(79, 129, 102)' for i in range(len(df_for_plot))]
-        layout=go.Layout(width=600,height=600)
+        layout=go.Layout(width=500,height=500)
         fig = go.Figure(data=[go.Pie(labels=df_for_plot.sector,
                              values=df_for_plot.percent, insidetextorientation='radial')], layout=layout)
-        fig.update_traces(hoverinfo='label+percent', textinfo='label', textfont_size=15,
+        fig.update_traces(hoverinfo='label+percent', textinfo='label', textfont_size=10,
                   marker=dict(colors=colors, line=dict(color='#FFFFFF', width=2)))
         fig.update(layout_showlegend=False)
         fig.update_layout(margin=dict(t=10))
