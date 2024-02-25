@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime
 import pandas as pd
+import yfinance as yf
 
 # headers and params used to bypass NASDAQ's anti-scraping mechanism in function __exchange2df
 headers = {
@@ -46,3 +47,6 @@ def __get_calendar_query(url:str, date:datetime = None, subcolumn:[str] = None, 
     if len(df) > 0:
         df = df.set_index(symbolcol)
     return df
+
+def _get_close_price(ticker):
+    return yf.Ticker(ticker).history(period='1d').Close[0]

@@ -7,8 +7,9 @@
 # - The total amount invested in the portfolio
 
 import streamlit as st
-import plotly.express as px
 import plotly.graph_objects as go
+
+from utils import _get_close_price
 
 class Portfolio:
     
@@ -26,13 +27,20 @@ class Portfolio:
         current_tickers = current_tickers[current_tickers.signed_shares > 0].index.to_list()
 
         self.transaction_data['Amount Paid'] = self.transaction_data['signed_shares']*self.transaction_data['stock_price']
+        self.transaction_data['Current Amount'] = (
+            self.transaction_data.apply(lambda x: _get_close_price(x['ticker']), axis=1)*self.transaction_data['signed_shares']
+        )
+        self.balance = self.transaction_data['Current Amount'].sum()
+        self.total_invested = self.transaction_data['Amount Paid'].sum()
+        self.total_return = 100*((self.balance - self.total_invested) / self.total_invested)
         
-        self.portfolio_data = self.transaction_data.groupby('ticker').agg({'Amount Paid':'sum'})
+        self.portfolio_data = self.transaction_data.groupby('ticker').agg({'Amount Paid':'sum', 'Current Amount':'sum'})
+        self.portfolio_data['Return'] = (self.portfolio_data['Current Amount'] - self.portfolio_data['Amount Paid'])/self.portfolio_data['Amount Paid']
+        self.portfolio_data['Return'] = (100*self.portfolio_data['Return']).apply(lambda x: f"{round(x, 2)}%")
         self.portfolio_data.reset_index(inplace=True)
         self.portfolio_data = self.portfolio_data[self.portfolio_data.ticker.isin(current_tickers)]
 
-        
-        
+
     def get_sectors(self):
         """
         Get the sectors from the sectors data
