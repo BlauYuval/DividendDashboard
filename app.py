@@ -37,7 +37,7 @@ if authentication_status:
     sectors_data = sectors_data[['ticker', 'sector', 'industry']].dropna().copy()
 
 
-    st.markdown(f"<h1 style='text-align: center; color: black;'>{name} - Dividend Dashboard", unsafe_allow_html=True)
+    st.markdown(f"<h1 style='text-align: center; color: white;'>{name} - Dividend Dashboard", unsafe_allow_html=True)
     # PORTFOLIO
 
     portfolio = Portfolio(transaction_data, sectors_data)

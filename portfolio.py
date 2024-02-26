@@ -60,7 +60,9 @@ class Portfolio:
         """
         table_for_plot = self.portfolio_data.set_index('ticker').copy()
         table_for_plot['Amount Paid'] = table_for_plot['Amount Paid'].apply(lambda x: f'{int(x):,}$')
+        table_for_plot['Current Amount'] = table_for_plot['Current Amount'].apply(lambda x: f'{int(x):,}$')
         table_for_plot = table_for_plot.rename(columns={'sector':'Sector', 'industry':'Industry'})
+        table_for_plot = table_for_plot.sort_values('Current Amount', ascending=False)
         
         st.table(table_for_plot)
         
