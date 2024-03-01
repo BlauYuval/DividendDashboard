@@ -43,7 +43,6 @@ if authentication_status:
 
     portfolio = Portfolio(transaction_data, sectors_data)
     portfolio.run()
-    ticker = st.text_input('Valid Uppercase Ticker:', 'SCHD')
     portfolio_returns = PortfolioReturns(transaction_data.rename(columns={'signed_shares':'shares'}), daily_prices)
     portfolio_returns.run(transaction_data['date'].min(), portfolio_returns.today, ticker)
 

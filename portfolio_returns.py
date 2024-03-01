@@ -58,12 +58,13 @@ class PortfolioReturns:
         
         return total_amounts
     
-    def add_comparison_ticker(self, ticker):
+    def add_comparison_ticker(self):
         """
         add comparison ticker to the portfolio
         :param ticker: 
         :return: 
         """
+        ticker = st.text_input('Valid Uppercase Ticker:', 'SCHD')
         try:
             prices = yf.Ticker(ticker).history(start=self.portfolio_df['date'].min(), auto_adjust=False)
             prices.index = pd.to_datetime(prices.index.strftime('%Y-%m-%d'))
@@ -89,12 +90,13 @@ class PortfolioReturns:
         if not other_ticker_prices.empty:
             df_dates[self.other_ticker] = (df_dates[self.other_ticker] - df_dates[self.other_ticker].iloc[0]) / df_dates[self.other_ticker].iloc[0]
             df_dates.rename(columns={self.other_ticker:f'{self.other_ticker} Returns'}, inplace=True)
-        st.subheader("Portfolio Returns")
+        
         st.line_chart(df_dates)
         
     def run(self, start_time, end_time, ticker=None):
         
+        st.subheader("Portfolio Returns")
         self.get_portfolio_returns()
         total_amounts = self.get_total_amounts()
-        other_ticker_prices = self.add_comparison_ticker(ticker) if ticker else pd.DataFrame()
+        other_ticker_prices = self.add_comparison_ticker()
         self.plot_portfolio(total_amounts, start_time, end_time, other_ticker_prices)
