@@ -1,6 +1,5 @@
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
-import pandas as pd
 
 from utils import get_div_hist_per_stock
 from data_loader import get_daily_prices_data
