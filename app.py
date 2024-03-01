@@ -3,16 +3,17 @@ from streamlit_gsheets import GSheetsConnection
 import pandas as pd
 
 from utils import get_div_hist_per_stock
+from data_loader import get_daily_prices_data
 from data_preprocessor import TransactionDataPreprocessing
 from income import Income
 from growth import DividendGrowth
 from portfolio import Portfolio
+from portfolio_returns import PortfolioReturns
 from data_preprocessor import TransactionDataPreprocessing, DividendDataPreprocessor
 from login import login
 
-# st.set_page_config(layout="wide")
-
-authentication_status, name = login()
+# authentication_status, name = login()
+authentication_status, name = True, 'Yuval Blau'
 if authentication_status:
 
     # Create a connection object.
@@ -36,12 +37,16 @@ if authentication_status:
     sectors_data = conn.read(spreadsheet=st.secrets['connections']['gsheets']['sectors'])
     sectors_data = sectors_data[['ticker', 'sector', 'industry']].dropna().copy()
 
+    daily_prices = get_daily_prices_data(transaction_data.ticker.unique(), transaction_data.date.min())
 
     st.markdown(f"<h1 style='text-align: center; color: white;'>{name} - Dividend Dashboard", unsafe_allow_html=True)
     # PORTFOLIO
 
     portfolio = Portfolio(transaction_data, sectors_data)
     portfolio.run()
+    ticker = st.text_input('Valid Uppercase Ticker:', 'SCHD')
+    portfolio_returns = PortfolioReturns(transaction_data.rename(columns={'signed_shares':'shares'}), daily_prices)
+    portfolio_returns.run(transaction_data['date'].min(), portfolio_returns.today, ticker)
 
     # INCOME
         
