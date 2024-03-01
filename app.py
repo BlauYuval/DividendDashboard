@@ -12,8 +12,8 @@ from portfolio_returns import PortfolioReturns
 from data_preprocessor import TransactionDataPreprocessing, DividendDataPreprocessor
 from login import login
 
-# authentication_status, name = login()
-authentication_status, name = True, 'Yuval Blau'
+authentication_status, name = login()
+# authentication_status, name = True, 'Yuval Blau'
 if authentication_status:
 
     # Create a connection object.
