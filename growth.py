@@ -156,17 +156,13 @@ class DividendGrowth:
         df = growth_df.copy()
         df = df.set_index('ticker')
         df['start_payment_date']  = df['start_payment_date'].dt.strftime('%Y-%m-%d')
-        # df = df.rename(columns={'start_payment_date':'First Div Payment', 'cagr_1y':'1Y CAGR', 'cagr_3y':'3Y CAGR', 'cagr_5y':'5Y CAGR', 'cagr_10y':'10Y CAGR', 'cagr_since_holding':'CAGR Since Holding'})
         df = df.rename(columns={'start_payment_date':'First Div Payment', 'cagr_1y':'1Y CAGR', 'cagr_3y':'3Y CAGR', 'cagr_5y':'5Y CAGR', 'cagr_10y':'10Y CAGR'})
         df = df[['First Div Payment', 'cagr_since_holding', '1Y CAGR', '3Y CAGR', '5Y CAGR', '10Y CAGR']].copy()
         df_styled = df.style.apply(self.color_cagr, axis=None, subset=['1Y CAGR', '3Y CAGR', '5Y CAGR', '10Y CAGR', 'cagr_since_holding'])
-        # df_styled = df_styled.rename(columns={'ticker':'Ticker', 'start_payment_date':'First Div Payment', 'cagr_1y':'1Y CAGR', 'cagr_3y':'3Y CAGR', 'cagr_5y':'5Y CAGR', 'cagr_10y':'10Y CAGR', 'cagr_since_holding':'CAGR Since Holding'})
-        # df_styled.columns = ['First Div Payment','Ticker', '1Y CAGR', '3Y CAGR', '5Y CAGR', '10Y CAGR', 'CAGR Since Holding']
-        # st.dataframe(df_styled)
-        # return df_styled.format({'CAGR Since Holding': "{:%Y-%m-%d}"}, precision=2)
         return df_styled.format(precision=2)
     
     def run(self):
-        st.header("Dividend Growth")
+ 
         growth_df = self.merge_prev_and_forward_growth()
-        st.table(self.plot(growth_df))
+        
+        return growth_df

@@ -93,12 +93,6 @@ class Income:
         
         monthly_income = income.amount_after_tax.sum()/12
         yearly_income = income.amount_after_tax.sum()
-        
-        
-        # monthly_income = self.dividend_daily_data['NET'].resample('M').sum().iloc[-4:-1].mean()
-        # prev_month_income = self.dividend_daily_data['NET'].resample('M').sum().iloc[-5:-2].mean()
-        # yearly_income = self.dividend_daily_data['NET'].resample('Y').sum().iloc[-1]
-        # prev_year_income = self.dividend_daily_data['NET'].resample('Y').sum().iloc[-2]
 
         kpi1, kpi2 = st.columns(2)
 
@@ -141,7 +135,4 @@ class Income:
         
         
     def run(self):
-        st.header("Income")
         self.get_income_data()
-        self.get_income_streamlit_bullet()
-        self.get_income_bar_chart()

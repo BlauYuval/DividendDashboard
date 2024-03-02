@@ -11,8 +11,8 @@ from portfolio_returns import PortfolioReturns
 from data_preprocessor import TransactionDataPreprocessing, DividendDataPreprocessor
 from login import login
 
-authentication_status, name = login()
-# authentication_status, name = True, 'Yuval Blau'
+# authentication_status, name = login()
+authentication_status, name = True, 'Yuval Blau'
 if authentication_status:
 
     # Create a connection object.
@@ -39,20 +39,36 @@ if authentication_status:
     daily_prices = get_daily_prices_data(transaction_data.ticker.unique(), transaction_data.date.min())
 
     st.markdown(f"<h1 style='text-align: center; color: white;'>{name} - Dividend Dashboard", unsafe_allow_html=True)
-    # PORTFOLIO
-
+    #Engine
+    ## PORTFOLIO
     portfolio = Portfolio(transaction_data, sectors_data)
-    portfolio.run()
+    portfolio.run()  
     portfolio_returns = PortfolioReturns(transaction_data.rename(columns={'signed_shares':'shares'}), daily_prices)
-    portfolio_returns.run(transaction_data['date'].min(), portfolio_returns.today, ticker)
-
-    # INCOME
-        
+    total_amounts = portfolio_returns.run()
+    ## INCOME
     income = Income(transaction_data, dividends_data)
     income.run()
-
-    # GROWTH
-
+    
+    ## GROWTH
     tickers = portfolio.portfolio_data.ticker.to_list()
     growth = DividendGrowth(income.transaction_data[['ticker','start_payment_date']], dividends_data, tickers)
-    growth.run()
+    growth_df = growth.run()
+    
+    #Display
+    ## PORTFOLIO
+    st.header("Portfolio") 
+    st.subheader("Current Holdings")
+    portfolio.plot_portoflio_tbl()
+    st.subheader("Sectors")
+    portfolio.plot_pie_by_sectors()
+    st.subheader("Portfolio Returns")
+    portfolio_returns.plot_portfolio(total_amounts, transaction_data['date'].min(), portfolio_returns.today)
+
+    ## INCOME
+    st.header("Income")
+    income.get_income_streamlit_bullet()
+    income.get_income_bar_chart()
+
+    ## GROWTH
+    st.header("Dividend Growth")
+    st.table(growth.plot(growth_df))

@@ -91,8 +91,4 @@ class Portfolio:
         self.get_current_holdings()
         self.get_sectors()
         self.get_sector_investments()
-        st.header("Portfolio")
-        st.subheader("Current Holdings")
-        self.plot_portoflio_tbl()
-        st.subheader("Sectors")
-        self.plot_pie_by_sectors()
+        

@@ -58,7 +58,7 @@ class PortfolioReturns:
         
         return total_amounts
     
-    def add_comparison_ticker(self):
+    def _add_comparison_ticker(self):
         """
         add comparison ticker to the portfolio
         :param ticker: 
@@ -79,10 +79,11 @@ class PortfolioReturns:
         
         return other_ticker_prices
     
-    def plot_portfolio(self, portfolio_total_amounts, start, end, other_ticker_prices=pd.DataFrame()):
+    def plot_portfolio(self, portfolio_total_amounts, start, end):
         """
         Plot the portfolio returns and the comparison ticker if exists
         """
+        other_ticker_prices = self._add_comparison_ticker()
         portfolio_total_amounts = pd.concat([portfolio_total_amounts, other_ticker_prices], axis=1)
         df_dates = portfolio_total_amounts.loc[start:end].copy()
         df_dates['Portfolio Returns'] = ((df_dates.current_amount-df_dates.amount_paid)  / (df_dates.amount_paid))
@@ -93,10 +94,10 @@ class PortfolioReturns:
         
         st.line_chart(df_dates)
         
-    def run(self, start_time, end_time, ticker=None):
+    def run(self):
         
         st.subheader("Portfolio Returns")
         self.get_portfolio_returns()
         total_amounts = self.get_total_amounts()
-        other_ticker_prices = self.add_comparison_ticker()
-        self.plot_portfolio(total_amounts, start_time, end_time, other_ticker_prices)
+
+        return total_amounts
