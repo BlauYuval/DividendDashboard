@@ -65,9 +65,9 @@ class DividendGrowth:
         tickers_df[['first_payment_date','first_amount', 'last_payment_date', 'last_amount', 'num_payments']] = pd.DataFrame(tickers_df.data.tolist(), index= tickers_df.index)
         tickers_df.drop(columns=['data'], inplace=True)
         tickers_df['years_of_growth_since_holding'] = tickers_df.apply(lambda row: self._calc_years_of_growth_since_buying(row.frequency, row.num_payments, row.first_amount, row.last_amount), axis=1)
-        tickers_df['cagr_since_holding'] =  tickers_df.apply(lambda row: self._calc_cagr(row.first_amount, row.last_amount, row.years_of_growth_since_holding), axis=1)
-        # tickers_df = tickers_df[['ticker','first_payment_date','years_of_growth_since_holding','cagr_since_holding']].sort_values('first_payment_date').drop_duplicates(subset=['ticker'], keep='first').reset_index(drop=True)  
-        tickers_df = tickers_df[['ticker','first_payment_date','years_of_growth_since_holding','cagr_since_holding']].reset_index(drop=True)     
+        tickers_df['CAGR Since Holding'] =  tickers_df.apply(lambda row: self._calc_cagr(row.first_amount, row.last_amount, row.years_of_growth_since_holding), axis=1)
+        # tickers_df = tickers_df[['ticker','first_payment_date','years_of_growth_since_holding','CAGR Since Holding']].sort_values('first_payment_date').drop_duplicates(subset=['ticker'], keep='first').reset_index(drop=True)  
+        tickers_df = tickers_df[['ticker','first_payment_date','years_of_growth_since_holding','CAGR Since Holding']].reset_index(drop=True)     
         return tickers_df  
 
     def _get_annaul_previous_payments(self, ticker, start_payment_date):
@@ -116,15 +116,16 @@ class DividendGrowth:
         # set font color to red for keys whose corresponding v is positive
         # all other values have default font color
         return pd.DataFrame('', index=x.index, columns=x.columns).assign(
-            cagr_since_holding=np.where(
-                x['cagr_since_holding']>x[['1Y CAGR', '3Y CAGR', '5Y CAGR', '10Y CAGR']].max(axis=1),
-                "color:darkgreen", 
-                    np.where(x['cagr_since_holding']<x[['1Y CAGR', '3Y CAGR', '5Y CAGR', '10Y CAGR']].min(axis=1),
-                    "color:salmon",
-                    np.where(x['cagr_since_holding'] == x['cagr_since_holding'], "color:limegreen", "")
-                    )
-                )
-            )
+            **{"CAGR Since Holding": np.where(
+                x['CAGR Since Holding'] > x[['1Y CAGR', '3Y CAGR', '5Y CAGR', '10Y CAGR']].max(axis=1),
+                "color:darkgreen",
+                np.where(x['CAGR Since Holding'] < x[['1Y CAGR', '3Y CAGR', '5Y CAGR', '10Y CAGR']].min(axis=1),
+                        "color:salmon",
+                        np.where(x['CAGR Since Holding'] == x['CAGR Since Holding'], "color:limegreen", "")
+                        )
+            )}
+        )
+
 
     def get_tickers_payment_start_date_and_freq(self, tickers_payments_start):
         
@@ -145,7 +146,7 @@ class DividendGrowth:
         forward_payments_cagr = self.get_forward_payments_cagr(tickers_df, self.dividends_data)
         prev_payments_cagr = self.previous_payments_cagr(tickers_df, self.dividends_data)
         growth_df = pd.concat(
-            [tickers_df[['start_payment_date']], prev_payments_cagr, forward_payments_cagr.drop(['ticker'], axis=1)[['cagr_since_holding']]], 
+            [tickers_df[['start_payment_date']], prev_payments_cagr, forward_payments_cagr.drop(['ticker'], axis=1)[['CAGR Since Holding']]], 
             axis=1)
         
         return growth_df.drop_duplicates(subset=['ticker'], keep='first').reset_index(drop=True)
@@ -157,8 +158,8 @@ class DividendGrowth:
         df = df.set_index('ticker')
         df['start_payment_date']  = df['start_payment_date'].dt.strftime('%Y-%m-%d')
         df = df.rename(columns={'start_payment_date':'First Div Payment', 'cagr_1y':'1Y CAGR', 'cagr_3y':'3Y CAGR', 'cagr_5y':'5Y CAGR', 'cagr_10y':'10Y CAGR'})
-        df = df[['First Div Payment', 'cagr_since_holding', '1Y CAGR', '3Y CAGR', '5Y CAGR', '10Y CAGR']].copy()
-        df_styled = df.style.apply(self.color_cagr, axis=None, subset=['1Y CAGR', '3Y CAGR', '5Y CAGR', '10Y CAGR', 'cagr_since_holding'])
+        df = df[['First Div Payment', 'CAGR Since Holding', '1Y CAGR', '3Y CAGR', '5Y CAGR', '10Y CAGR']].copy()
+        df_styled = df.style.apply(self.color_cagr, axis=None, subset=['1Y CAGR', '3Y CAGR', '5Y CAGR', '10Y CAGR', 'CAGR Since Holding'])
         return df_styled.format(precision=2)
     
     def run(self):

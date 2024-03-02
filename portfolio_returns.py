@@ -96,7 +96,6 @@ class PortfolioReturns:
         
     def run(self):
         
-        st.subheader("Portfolio Returns")
         self.get_portfolio_returns()
         total_amounts = self.get_total_amounts()
 
