@@ -8,11 +8,12 @@ from income import Income
 from growth import DividendGrowth
 from portfolio import Portfolio
 from portfolio_returns import PortfolioReturns
+from executive_summery import ExecutiveSummery
 from data_preprocessor import TransactionDataPreprocessing, DividendDataPreprocessor
 from login import login
 
-authentication_status, name = login()
-# authentication_status, name = True, 'Yuval Blau'
+# authentication_status, name = login()
+authentication_status, name = True, 'Yuval Blau'
 if authentication_status:
 
     # Create a connection object.
@@ -47,7 +48,7 @@ if authentication_status:
     total_amounts = portfolio_returns.run()
     ## INCOME
     income = Income(transaction_data, dividends_data)
-    income.run()
+    monthly_income, yearly_income = income.run()
     
     ## GROWTH
     tickers = portfolio.portfolio_data.ticker.to_list()
@@ -55,6 +56,18 @@ if authentication_status:
     growth_df = growth.run()
     
     #Display
+    ## Excetive Summary
+    summery = ExecutiveSummery(portfolio, portfolio_returns, income, growth)
+    total_return, amount_invested, return_yield = summery.get_total_return()
+    dividend_yield, yield_on_cost = summery.get_dividend_yield(total_return, amount_invested, yearly_income)
+    average_dividend_growth = summery.get_average_dividend_growth(growth_df)
+    
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Total Return", f"{int(total_return):,}$", f"{round(return_yield,2)}%")
+    col2.metric("Dividend Yield", f"{round(dividend_yield, 2)}%")
+    col3.metric("Yield on Cost", f"{round(yield_on_cost, 2)}%")
+    col4.metric("Average Dividend Growth", f"{round(average_dividend_growth, 2)}%")
+    
     ## PORTFOLIO
     st.header("Portfolio") 
     st.subheader("Current Holdings")
@@ -66,7 +79,7 @@ if authentication_status:
 
     ## INCOME
     st.header("Income")
-    income.get_income_streamlit_bullet()
+    income.get_income_streamlit_bullet(monthly_income, yearly_income)
     income.get_income_bar_chart()
 
     ## GROWTH

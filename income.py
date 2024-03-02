@@ -79,11 +79,8 @@ class Income:
         self.dividend_daily_data['SUM'] = self.dividend_daily_data.sum(axis=1)
         self.dividend_daily_data['NET'] = self.dividend_daily_data['SUM']*(1 - self.tax_rate)
         
-    def get_income_streamlit_bullet(self):
-        """
-        Get the monthly income streamlit bullet.
-        Do it by sum the NET column of the past 3 whole months and devide it by 3
-        """
+    def get_monthly_and_yearly_income(self):
+        
         ticker_shares = self.transaction_data.groupby('ticker').agg({'signed_shares':'sum'})
         ticker_last_amount = self.dividends_data[self.dividends_data.groupby(['ticker'])['payment_date'].transform('max') == self.dividends_data['payment_date']].set_index('ticker')[['value','frequency']]
         income = ticker_shares.merge(ticker_last_amount, left_index=True, right_index=True)
@@ -92,7 +89,24 @@ class Income:
         income['amount_after_tax'] = income['amount']*(1 - self.tax_rate)
         
         monthly_income = income.amount_after_tax.sum()/12
-        yearly_income = income.amount_after_tax.sum()
+        yearly_income = income.amount_after_tax.sum()   
+        
+        return monthly_income, yearly_income 
+       
+    def get_income_streamlit_bullet(self, monthly_income, yearly_income ):
+        """
+        Get the monthly income streamlit bullet.
+        Do it by sum the NET column of the past 3 whole months and devide it by 3
+        """
+        # ticker_shares = self.transaction_data.groupby('ticker').agg({'signed_shares':'sum'})
+        # ticker_last_amount = self.dividends_data[self.dividends_data.groupby(['ticker'])['payment_date'].transform('max') == self.dividends_data['payment_date']].set_index('ticker')[['value','frequency']]
+        # income = ticker_shares.merge(ticker_last_amount, left_index=True, right_index=True)
+        # # income['frequency'] = income['frequency'].apply(lambda x: 12 if x == 'monthly' else 4 if x == 'quarterly' else 2 if x == 'semi-annual' else 1)
+        # income['amount'] = income['signed_shares']*income['value']*income['frequency']
+        # income['amount_after_tax'] = income['amount']*(1 - self.tax_rate)
+        
+        # monthly_income = income.amount_after_tax.sum()/12
+        # yearly_income = income.amount_after_tax.sum()
 
         kpi1, kpi2 = st.columns(2)
 
@@ -136,3 +150,6 @@ class Income:
         
     def run(self):
         self.get_income_data()
+        monthly_income, yearly_income = self.get_monthly_and_yearly_income()
+        
+        return monthly_income, yearly_income
