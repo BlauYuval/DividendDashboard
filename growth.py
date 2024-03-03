@@ -118,10 +118,10 @@ class DividendGrowth:
         return pd.DataFrame('', index=x.index, columns=x.columns).assign(
             **{"CAGR Since Holding": np.where(
                 x['CAGR Since Holding'] > x[['1Y CAGR', '3Y CAGR', '5Y CAGR', '10Y CAGR']].max(axis=1),
-                "color:darkgreen",
+                "color:forestgreen",
                 np.where(x['CAGR Since Holding'] < x[['1Y CAGR', '3Y CAGR', '5Y CAGR', '10Y CAGR']].min(axis=1),
                         "color:salmon",
-                        np.where(x['CAGR Since Holding'] == x['CAGR Since Holding'], "color:limegreen", "")
+                        np.where(x['CAGR Since Holding'] == x['CAGR Since Holding'], "color:lawngreen", "")
                         )
             )}
         )

@@ -8,6 +8,7 @@
 
 import streamlit as st
 import plotly.graph_objects as go
+import plotly.express as px
 
 from utils import _get_close_price
 
@@ -74,12 +75,15 @@ class Portfolio:
         df_for_plot['Amount Paid'] = df_for_plot['Amount Paid'].apply(lambda x: round(x, 2))
         df_for_plot['percent'] = (df_for_plot['Amount Paid']/df_for_plot['Amount Paid'].sum()).apply(lambda x: round(x, 2))*100
         colors = ['rgb(79, 129, 102)' for i in range(len(df_for_plot))]
-        layout=go.Layout(width=500,height=500)
-        fig = go.Figure(data=[go.Pie(labels=df_for_plot.sector,
-                             values=df_for_plot.percent, insidetextorientation='radial')], layout=layout)
-        fig.update_traces(hoverinfo='label+percent', textinfo='label', textfont_size=10,
-                  marker=dict(colors=colors, line=dict(color='#FFFFFF', width=2)))
-        fig.update(layout_showlegend=False)
+        layout=go.Layout(width=400,height=400)
+        # fig = go.Figure(data=[go.Pie(labels=df_for_plot.sector,
+        #                      values=df_for_plot.percent, insidetextorientation='radial')], layout=layout)
+        fig = px.pie(df_for_plot, names='sector', values='percent', labels='Amount Paid',  color='sector', color_discrete_sequence=px.colors.sequential.Viridis)
+        # fig.update_traces(hoverinfo='label+percent', textinfo='label', textfont_size=10,
+        #           marker=dict(colors=colors, line=dict(color='#FFFFFF', width=2)))
+        fig.update_traces(hoverinfo='label+percent', textfont_size=10,
+                  marker=dict(line=dict(color='#FFFFFF', width=2)))
+        fig.update(layout_showlegend=True)
         fig.update_layout(margin=dict(t=10))
         st.plotly_chart(fig)
         

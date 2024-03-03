@@ -37,4 +37,4 @@ class ExecutiveSummery:
         average_dividend_growth = (df['CAGR Since Holding']*df['Amount Paid']).sum()/df['Amount Paid'].sum()
         
         return average_dividend_growth
-        
+    
