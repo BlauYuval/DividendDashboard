@@ -73,18 +73,29 @@ class Portfolio:
         """
         df_for_plot = self.portfolio_by_sectors_data.copy()
         df_for_plot['Amount Paid'] = df_for_plot['Amount Paid'].apply(lambda x: round(x, 2))
-        df_for_plot['percent'] = (df_for_plot['Amount Paid']/df_for_plot['Amount Paid'].sum()).apply(lambda x: round(x, 2))*100
-        colors = ['rgb(79, 129, 102)' for i in range(len(df_for_plot))]
-        layout=go.Layout(width=400,height=400)
-        # fig = go.Figure(data=[go.Pie(labels=df_for_plot.sector,
-        #                      values=df_for_plot.percent, insidetextorientation='radial')], layout=layout)
-        fig = px.pie(df_for_plot, names='sector', values='percent', labels='Amount Paid',  color='sector', color_discrete_sequence=px.colors.sequential.Viridis)
-        # fig.update_traces(hoverinfo='label+percent', textinfo='label', textfont_size=10,
-        #           marker=dict(colors=colors, line=dict(color='#FFFFFF', width=2)))
-        fig.update_traces(hoverinfo='label+percent', textfont_size=10,
-                  marker=dict(line=dict(color='#FFFFFF', width=2)))
-        fig.update(layout_showlegend=True)
-        fig.update_layout(margin=dict(t=10))
+        df_for_plot['percent'] = (df_for_plot['Amount Paid']/df_for_plot['Amount Paid'].sum()).apply(lambda x: round(x, 2))*100     
+        df_for_plot = df_for_plot.sort_values('percent', ascending=True)
+        fig = go.Figure()
+        fig.add_trace(go.Bar(
+            x=df_for_plot['percent'],
+            y=df_for_plot['sector'],
+            marker=dict(
+                color='rgba(50, 171, 96, 0.6)',
+                line=dict(
+                    color='rgba(50, 171, 96, 1.0)',
+                    width=1),
+            ),
+            orientation='h',
+            text=df_for_plot['sector'],  # Set the text to display on the bars
+            textposition='inside',   
+            textfont=dict(color='white')# Set the position of the text inside the bars
+        ))
+        fig.update_layout(
+            xaxis=dict(title='Percentage'),
+            yaxis=dict(title='', showticklabels=False),  # Empty string to remove y-axis title
+            barmode='stack',
+            width=700,
+        )
         st.plotly_chart(fig)
         
         
