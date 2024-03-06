@@ -75,29 +75,9 @@ class Portfolio:
         df_for_plot['Amount Paid'] = df_for_plot['Amount Paid'].apply(lambda x: round(x, 2))
         df_for_plot['percent'] = (df_for_plot['Amount Paid']/df_for_plot['Amount Paid'].sum()).apply(lambda x: round(x, 2))*100     
         df_for_plot = df_for_plot.sort_values('percent', ascending=True)
-        fig = go.Figure()
-        fig.add_trace(go.Bar(
-            x=df_for_plot['sector'],
-            y=df_for_plot['percent'],
-            marker=dict(
-                color='rgba(50, 171, 96, 0.6)',
-                line=dict(
-                    color='rgba(50, 171, 96, 1.0)',
-                    width=1),
-            ),
-            orientation='v',
-            text=df_for_plot['sector'],  # Set the text to display on the bars
-            textposition='inside',   
-            textfont=dict(color='white')# Set the position of the text inside the bars
-        ))
-        fig.update_layout(
-            xaxis=dict(title='', showticklabels=False),
-            yaxis=dict(title='Percentage', showticklabels=False),  # Empty string to remove y-axis title
-            # barmode='stack',
-            height=500,
-            width=500,
-        )
-        st.plotly_chart(fig)
+        
+        st.bar_chart(data=df_for_plot, x='sector', y='percent', height=500)
+
         
         
     def run(self):
@@ -107,4 +87,5 @@ class Portfolio:
         self.get_current_holdings()
         self.get_sectors()
         self.get_sector_investments()
+        
         
