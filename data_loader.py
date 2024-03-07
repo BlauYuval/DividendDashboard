@@ -4,7 +4,6 @@ import streamlit as st
 
 from utils import get_div_hist_per_stock
 
-@st.cache
 def get_daily_prices_data(tickers, start_time):
     """
     Get daily prices for a list of tickers from Yahoo Finance
@@ -17,7 +16,6 @@ def get_daily_prices_data(tickers, start_time):
         
     return daily_price
 
-@st.cache
 def get_transacton_data(conn):
     """
     Get the transaction data
@@ -28,7 +26,6 @@ def get_transacton_data(conn):
 
     return transaction_data
 
-@st.cache
 def get_dividend_data(transaction_data):
     """
     Get the dividend data
@@ -40,7 +37,6 @@ def get_dividend_data(transaction_data):
     
     return dividends_dict
 
-@st.cache
 def get_sector_data(conn):
     """
     Get the sector data
