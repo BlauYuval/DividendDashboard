@@ -17,13 +17,11 @@ headers = {
     'accept-language': 'en-US,en;q=0.9',
 }
 
-@st.cache
 def get_div_hist_per_stock(symbol:str):
     url = 'https://api.nasdaq.com/api/quote/' + symbol + '/dividends'
     params = {'assetclass' : 'stocks'}
     return __get_calendar_query(url, subcolumn=['dividends'], paramsin=params, symbolcol='exOrEffDate')
 
-@st.cache
 def __get_calendar_query(url:str, date:datetime = None, subcolumn:[str] = None, symbolcol:str = 'symbol', date_is_month:bool = False, paramsin=None):
     if paramsin is None:
         if date is None:
